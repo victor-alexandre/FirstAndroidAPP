@@ -40,8 +40,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         updateDisplayName();
-
-
     }
 
     @Override
@@ -82,8 +80,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                     }
                 });
-
-
     }
 }
 
