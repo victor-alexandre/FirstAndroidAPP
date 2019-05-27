@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "677771150522",
+    "firebase_url": "https://testelogin-95bdd.firebaseio.com",
+    "project_id": "testelogin-95bdd",
+    "storage_bucket": "testelogin-95bdd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677771150522:android:b2de018e54390229",
+        "android_client_info": {
+          "package_name": "com.example.loginv3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "677771150522-nlb59gj92ssljm78e15nf8f3go6ughq1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzgqsYCbVWt03BfdDXoY0FGWoyE6jYG58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677771150522-nlb59gj92ssljm78e15nf8f3go6ughq1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
