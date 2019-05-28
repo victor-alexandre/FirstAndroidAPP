@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +13,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "ProfileActivity";
@@ -19,6 +22,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private EditText usernameField;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private ImageView mImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,17 +31,27 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         findViewById(R.id.updateButton).setOnClickListener(this);
         findViewById(R.id.logoutButton).setOnClickListener(this);
+        findViewById(R.id.profileImage).setOnClickListener(this);
 
         mTextView = findViewById(R.id.welcomeText);
         usernameField = findViewById(R.id.usernameField);
+        mImage = findViewById(R.id.profileImage);
 
-
+        //autenticação
         mAuth = FirebaseAuth.getInstance();
 
         mTextView.setText("Seja bem vindo de volta " + mAuth.getCurrentUser().getEmail());
 
-
+        //banco de dados
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
+
+        //Cloud firestorage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+        StorageReference imagesRef = storageRef.child("images");
+
 
         updateDisplayName();
     }
@@ -47,10 +61,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         int i = v.getId();
         if (i == R.id.updateButton){
             updateUserData(mAuth.getCurrentUser().getUid(), usernameField.getText().toString());
-
         }
         if (i == R.id.logoutButton){
-            mDatabase.child("message").setValue("desloguei");
+            mDatabase.child("message").setValue("desloguei");//só um teste para ver se eu consigo criar novos nós
+            signOut();
+        }
+        if (i == R.id.profileImage){
+            //abrir arquivos e upar imagem
             signOut();
         }
     }
@@ -71,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User temp = dataSnapshot.getValue(User.class);
-                        String name = temp.username; // "John Doe"
+                        String name = temp.username;
                         mTextView.setText("Seja bem vindo de volta Sr(a)" + name);
                     }
 

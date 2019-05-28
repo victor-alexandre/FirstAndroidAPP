@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //FirebaseAuth
         mAuth = FirebaseAuth.getInstance();
 
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);//mesmo com isso ativo após o restart do app os dados não foram salvos. Não sei se isso ocorreu pelo fato de eu estar usando o emulador
         mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
