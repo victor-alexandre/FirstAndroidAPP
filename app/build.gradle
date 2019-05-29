@@ -33,6 +33,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:17.0.0'
 
     implementation 'com.google.firebase:firebase-storage:17.0.0'
+    implementation 'com.firebaseui:firebase-ui-storage:4.3.1'
+
+
+    // Find the latest Glide releases here: https://goo.gl/LpksbR
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    // If you're using Kotlin (and therefore, kapt), use kapt instead of annotationProcessor
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
 
     // Add dependency
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
