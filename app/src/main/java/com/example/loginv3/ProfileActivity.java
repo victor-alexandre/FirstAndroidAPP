@@ -75,9 +75,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        //ativar os botões
         findViewById(R.id.updateButton).setOnClickListener(this);
         findViewById(R.id.logoutButton).setOnClickListener(this);
         findViewById(R.id.atualizarButton).setOnClickListener(this);
+        findViewById(R.id.errorButton).setOnClickListener(this);
+
+        //ativar o texto
+        findViewById(R.id.downloadText).setOnClickListener(this);
+
+        //ativar a imagem
         findViewById(R.id.profileImage).setOnClickListener(this);
 
 
@@ -113,18 +120,33 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         int i = v.getId();
         if (i == R.id.updateButton){
             updateUserData(mAuth.getCurrentUser().getUid(), usernameField.getText().toString());
+            openImageChooser(UPLOAD_PICTURE);
         }
         if (i == R.id.logoutButton){
             mDatabase.child("message").setValue("desloguei");//só um teste para ver se eu consigo criar novos nós
             signOut();
         }
         if (i == R.id.profileImage){
-            openImageChooser(UPLOAD_PICTURE);
+            openImageChooser(SELECT_PICTURE);
         }
 
         if(i == R.id.atualizarButton){
             refreshScreen();
         }
+        if(i == R.id.errorButton){
+            generateError();
+        }
+        if(i == R.id.downloadText){
+            generateError();
+        }
+
+    }
+
+    private void generateError(){
+        //Força a geração de um ArrayIndexOutOfBoundsException
+        char error [] = new char[10];
+        System.out.print(error[11]);
+
     }
 
     private void refreshScreen(){
@@ -145,10 +167,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
 
     private void updateProfilePicture(){
-        StorageReference pathReference = storageRef.child("images/"+mUser.getUid()+"/profilePic");
-        Glide.with(mContext)
-                .load(pathReference)
-                .into(mImage);
+        StorageReference pathReference = storageRef.child("images/"+mUser.getUid()+"/profilePic").getParent();
+
+        if(pathReference == null){
+            return;
+        } else {
+            pathReference = storageRef.child("images/"+mUser.getUid()+"/profilePic");
+            Glide.with(mContext).load(pathReference).into(mImage);
+        }
     }
 
     private void updateDisplayName(){
@@ -181,9 +207,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             Log.d(TAG, "checkBTPermissions: No need to check permissions. SDK version < LOLLIPOP.");
         }
     }
-
-////////////////////////////////////inicio do código que funciona
-
 
 
     private void handlePermission() {
@@ -423,189 +446,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         context.startActivity(i);
     }
-
-
-//////////////////////////////////////////Fim do codigo que funciona
-
-/*
-private void uploadIMG(){
-    //get the signed in user
-    FirebaseUser user = mAuth.getCurrentUser();
-    String userID = user.getUid();
-        Uri uri = Uri.fromFile(new File(pathArray.get(array_position)));
-        StorageReference storageReference = mStorageRef.child("images/users/" + userID + "/" + name + ".jpg");
-        storageReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // Get a URL to the uploaded content
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                toastMessage("Upload Success");
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                toastMessage("Upload Failed");
-
-            }
-        })
-        ;
-
-}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-    private void tentativaUpload (){
-        // File or Blob
-        File file = Uri.fromFile(new File("path/to/mountains.jpg"));
-
-
-
-        // Create the file metadata
-        metadata = new StorageMetadata.Builder()
-                .setContentType("image/jpeg")
-                .build();
-
-        // Upload file and metadata to the path 'images/mountains.jpg'
-        uploadTask = storageRef.child("images/"+file.getLastPathSegment()).putFile(file, metadata);
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                System.out.println("Upload is " + progress + "% done");
-            }
-        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                System.out.println("Upload is paused");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // Handle successful uploads on complete
-                // ...
-            }
-        });
-    }
-*/
-    //Tentativa 2 de upar imagens- deu mais ou menos certo
-
-
-/*    private static final int GALLERY_REQUEST_CODE = 1;
-
-    private void pickFromGallery(){
-        //Create an Intent with action as ACTION_PICK
-        Intent intent=new Intent(Intent.ACTION_PICK);
-        // Sets the type as image/*. This ensures only components of type image are selected
-        intent.setType("image/*");
-        //We pass an extra array with the accepted mime types. This will ensure only components with these MIME types as targeted.
-        String[] mimeTypes = {"image/jpeg", "image/png"};
-        intent.putExtra(Intent.EXTRA_MIME_TYPES,mimeTypes);
-        // Launching the Intent
-        startActivityForResult(intent,GALLERY_REQUEST_CODE);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data){
-        // Result code is RESULT_OK only if the user selects an Image
-        if (resultCode == Activity.RESULT_OK)
-            switch (requestCode){
-                case GALLERY_REQUEST_CODE:
-                    //data.getData return the content URI for the selected Image
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                    // Get the cursor
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    // Move to first row
-                    cursor.moveToFirst();
-                    //Get the column index of MediaStore.Images.Media.DATA
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    //Gets the String value in the column
-                    String imgDecodableString = cursor.getString(columnIndex);
-                    cursor.close();
-                    // Set the Image in ImageView after decoding the String
-                    mImage.setImageBitmap(BitmapFactory.decodeFile(imgDecodableString));
-                    break;
-
-            }
-    }
-
-
-
-*/
-
-
-
-//Tentativa 1 de upar imagens
-    /*public static final int PICK_IMAGE = 1;
-
-        private void uploadImg(){
-
-     *//*
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-        *//*
-        pickFromGallery();
-
-        Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
-        StorageReference riversRef = storageRef.child("images/"+file.getLastPathSegment());
-        uploadTask = riversRef.putFile(file);
-
-        // Register observers to listen for when the download is done or if it fails
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-            }
-        });
-
-    }*/
-
-
-
-
-    /*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (requestCode == PICK_IMAGE) {
-            //TODO: action
-        }
-    }
-    */
-
-
 
 }
 
